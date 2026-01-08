@@ -25,6 +25,18 @@ fn evaluate(op: &Instruction) -> Value {
                 Value::String(buf)
             }
         },
+        Instruction::FunctionCall { func, args } => todo!(),
+        Instruction::GetLocalVar(_) => todo!(),
+        Instruction::NewLocalVar {
+            var_index,
+            var_value,
+            body,
+        } => todo!(),
+        Instruction::IfExpr {
+            condition,
+            case_true,
+            case_false,
+        } => todo!(),
     }
 }
 
