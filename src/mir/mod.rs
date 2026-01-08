@@ -1,4 +1,5 @@
 mod custom;
+mod eval;
 use crate::id::{FunctionId, TypeId};
 
 pub use custom::CustomInstructionCode;
@@ -9,7 +10,6 @@ pub struct StaticExpression {
     // NOTE maybe make this into an array of typeIDs later
     pub ty: TypeId,
 }
-
 
 #[derive(Debug)]
 pub enum Instruction {
@@ -51,6 +51,9 @@ pub enum Instruction {
 
 impl Instruction {
     pub fn expr(self, ty: TypeId) -> StaticExpression {
-        StaticExpression { instr: Box::new(self), ty }
+        StaticExpression {
+            instr: Box::new(self),
+            ty,
+        }
     }
 }
