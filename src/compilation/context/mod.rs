@@ -1,5 +1,5 @@
 mod function_store;
-use self::function_store::{FunctionInfo, FunctionStore};
+pub use function_store::*;
 
 use super::CompilationError;
 use crate::{
