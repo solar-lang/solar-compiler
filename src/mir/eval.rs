@@ -11,6 +11,20 @@ fn evaluate(op: &Instruction) -> Value {
                 assert!(args.len() == 1, "expect only one argument to be passed");
                 evaluate(&args[0].instr)
             }
+            CustomInstructionCode::Print => {
+                let text = string_concat(args);
+                print!("{text}");
+                Value::Void
+            }
+            CustomInstructionCode::Readline => {
+                if !args.is_empty() {
+                    print!("{}", string_concat(args));
+                }
+                let mut buf = String::new();
+                std::io::stdin().read_line(buf).expect("read line");
+                Value::String(buf)
+            }
+        },
     }
 }
 
