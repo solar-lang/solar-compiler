@@ -4,6 +4,10 @@ use crate::value::Value;
 fn evaluate(op: &Instruction) -> Value {
     match op {
         Instruction::Const(v) => v.clone(),
+        Instruction::Custom { code, args } => match code {
+            CustomInstructionCode::StrConcat => Value::String(string_concat(args)),
+    }
+}
 
 fn string_concat(args: &[super::StaticExpression]) -> String {
     let mut buffer = String::new();
