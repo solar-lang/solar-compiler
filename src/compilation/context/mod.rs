@@ -1,7 +1,6 @@
 mod function_store;
 use self::function_store::{FunctionInfo, FunctionStore};
 
-use super::interpreter::InterpreterContext;
 use super::CompilationError;
 use crate::{
     id::{FunctionId, IdItem, IdModule, Symbol, SymbolId, TypeId, SSID},
