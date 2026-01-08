@@ -4,8 +4,8 @@ use self::function_store::{FunctionInfo, FunctionStore};
 use super::interpreter::InterpreterContext;
 use super::CompilationError;
 use crate::{
-    mir::{CustomInstructionCode, Instruction, StaticExpression},
     id::{FunctionId, IdItem, IdModule, Symbol, SymbolId, TypeId, SSID},
+    mir::{CustomInstructionCode, Instruction, StaticExpression},
     project::{FileInfo, FindError, GlobalModules, Module, ProjectInfo, SymbolResolver},
     types::{
         buildin::{link_buildin_types, BuildinTypeId},
@@ -15,8 +15,12 @@ use crate::{
     value::Value,
 };
 use hotel::HotelMap;
-use solar_parser::ast::{self, body::BodyItem, expr::{FullExpression, Literal}};
-use std::sync::{Mutex, RwLock};
+use solar_parser::ast::{
+    self,
+    body::BodyItem,
+    expr::{FullExpression, Literal},
+};
+use std::sync::RwLock;
 
 /// Struct that gets created once globally
 /// Containing Information about all Modules, ASTs, Projects
@@ -33,10 +37,6 @@ pub struct CompilerContext<'a> {
     pub types: RwLock<HotelMap<SSID, Type>>,
 
     pub functions: RwLock<FunctionStore>,
-
-    // TODO remove
-    /// Contains runtime configurations, like stdin and stdout
-    pub interpreter_ctx: Mutex<InterpreterContext>,
 }
 
 impl<'a> CompilerContext<'a> {
@@ -52,14 +52,13 @@ impl<'a> CompilerContext<'a> {
         CompilerContext {
             project_info,
             module_info,
-            interpreter_ctx: Mutex::new(InterpreterContext::default()),
             types,
             functions,
             buildin_types,
         }
     }
 
-    /// Get a reference to the symbol inside the AST. 
+    /// Get a reference to the symbol inside the AST.
     pub fn get_symbol(&self, (module, file, item): SymbolId) -> (&Module, &FileInfo, &BodyItem) {
         let module = self
             .module_info
@@ -185,7 +184,7 @@ impl<'a> CompilerContext<'a> {
                         return Ok((fnid, body.ty));
                     }
                     // this can happen, when we recursively call a function in solar code.
-                    // e.g. fibonacci 
+                    // e.g. fibonacci
                     FunctionInfo::Partial => {
                         panic!("only found partial function information during compilation. Find out later what to do here");
                     }
@@ -255,11 +254,11 @@ impl<'a> CompilerContext<'a> {
                 let mut let_list = Vec::new();
                 // Note, the problem her is:
                 /*
-                    let x = 5,
-                        y = x + 1,
-                        z = y^2 in
-                        evaluate z 
-                 */
+                   let x = 5,
+                       y = x + 1,
+                       z = y^2 in
+                       evaluate z
+                */
                 // This will be much simplet with a simplified AST type
 
                 // Insert all let bindings into scope
@@ -307,10 +306,10 @@ impl<'a> CompilerContext<'a> {
                 /*
                  let x = 7,
                      y = 8 in x+y
-                
+
                 to
 
-                let x = 7 in 
+                let x = 7 in
                 let y = 8 in x+y
                  */
 
@@ -424,7 +423,7 @@ impl<'a> CompilerContext<'a> {
                 // x
                 // person.name
                 // order
-                // 
+                //
                 // may also be ->v<-
                 // where we do not know at this point, what kind of arguments "double" takes.
                 // map [7, 9] double
@@ -449,15 +448,16 @@ impl<'a> CompilerContext<'a> {
 
                 let symbol = symbols.pop().unwrap();
 
-                /* 
+                /*
                     Note, if we have a function here, we don't want to do a functioncall.
                     We want to return a reference to the function.
                     If we have a symbol pointing to a value, we'd like to return the value.
                 */
 
-
                 match symbol {
-                    Symbol::LocalVar { addr, ty } => Ok(Instruction::GetLocalVar(addr as usize).expr(ty)),
+                    Symbol::LocalVar { addr, ty } => {
+                        Ok(Instruction::GetLocalVar(addr as usize).expr(ty))
+                    }
                     Symbol::Global(symbol_id) => {
                         // TODO we can't do that here
                         // because we DO NOT KNOW the kinds of arguments needed!
@@ -610,26 +610,20 @@ impl<'a> CompilerContext<'a> {
     }
 }
 
-fn compile_constant_value(literal: &Literal, type_ids: &BuildinTypeId) -> Result<StaticExpression, CompilationError> {
-        let (value, ty) = match literal {
-            Literal::StringLiteral(s) => (
-                    Value::String(s.value.to_string()),
-                    type_ids.string,
-                ),
-            Literal::Bool{ value, .. }  => (
-                Value::Bool(*value),
-                type_ids.bool,
-            ),
+fn compile_constant_value(
+    literal: &Literal,
+    type_ids: &BuildinTypeId,
+) -> Result<StaticExpression, CompilationError> {
+    let (value, ty) = match literal {
+        Literal::StringLiteral(s) => (Value::String(s.value.to_string()), type_ids.string),
+        Literal::Bool { value, .. } => (Value::Bool(*value), type_ids.bool),
         Literal::Int(int) => {
             let (i, ty) = util::eval_int(int, type_ids)?;
             (Value::Int(i), ty)
         }
         Literal::Float(f) => {
             let f = f.parse::<f64>()?;
-            (
-                Value::Float(f),
-                type_ids.float,
-            )
+            (Value::Float(f), type_ids.float)
         }
     };
 
@@ -750,8 +744,6 @@ impl<'a> CompilerContext<'a> {
         &self,
         args: &[StaticExpression],
     ) -> Result<(CustomInstructionCode, TypeId), CompilationError> {
-        let mut iio = self.interpreter_ctx.lock().expect("lock interpreter io");
-
         // allowed overloadings:
         // [String]
         // []
