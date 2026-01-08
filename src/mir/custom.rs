@@ -1,5 +1,4 @@
-
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub enum CustomInstructionCode {
     StrConcat,
     Print,
