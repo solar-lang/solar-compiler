@@ -6,6 +6,11 @@ fn evaluate(op: &Instruction) -> Value {
         Instruction::Const(v) => v.clone(),
         Instruction::Custom { code, args } => match code {
             CustomInstructionCode::StrConcat => Value::String(string_concat(args)),
+            CustomInstructionCode::Identity => {
+                // TODO don't evaluate functions
+                assert!(args.len() == 1, "expect only one argument to be passed");
+                evaluate(&args[0].instr)
+            }
     }
 }
 
