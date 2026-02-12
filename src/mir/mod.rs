@@ -1,5 +1,5 @@
 mod custom;
-mod eval;
+pub mod eval;
 use crate::id::{FunctionId, TypeId};
 
 pub use custom::CustomInstructionCode;
