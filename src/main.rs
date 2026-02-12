@@ -11,6 +11,8 @@ use project::{read_all_projects, read_modules};
 
 use compilation::CompilerContext;
 
+use crate::mir::eval::EvaluationContext;
+
 fn main() {
     // Root directory of the solar code project that we intent to compile
     let fsroot = std::env::args().nth(1).unwrap_or(".".to_string());
@@ -23,12 +25,13 @@ fn main() {
 
     let main_symbol_id = ctx.find_target_main().expect("find main function");
 
-    let function_id = ctx.compile_symbol(f_main, &[]).expect("compile code");
+    let (main_function_id, _main_ret_type_id) = ctx
+        .compile_symbol(main_symbol_id, &[])
+        .expect("compile code");
+    eprintln!("\n{main_function_id:#?}");
 
-    eprintln!("\n{function_id:#?}");
+    let mut ctx: EvaluationContext = ctx.into();
 
-    for (k, _i, v) in ctx.functions.read().unwrap().iter() {
-        let k = k.0 .0.join(".") + &format!(".{}", k.0 .1);
-        eprintln!("{}:\n{:#?}\n", k, v);
-    }
+    let res = ctx.call(main_function_id, Vec::new());
+    dbg!(res);
 }
