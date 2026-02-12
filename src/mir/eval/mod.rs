@@ -1,4 +1,5 @@
-use crate::mir::{CustomInstructionCode, Instruction};
+use crate::compilation::FunctionInfo;
+use crate::mir::{CustomInstructionCode, Instruction, StaticExpression};
 use crate::value::Value;
 
 use std::sync::{Mutex, RwLock};
@@ -70,7 +71,6 @@ impl EvaluationContext {
                 CustomInstructionCode::Identity => {
                     // TODO don't evaluate functions
                     assert!(args.len() == 1, "expect only one argument to be passed");
-                    self.evaluate(&args[0].instr)
                     self.eval_instruction(&args[0].instr)
                 }
                 CustomInstructionCode::Print => {
@@ -105,7 +105,6 @@ impl EvaluationContext {
     fn string_concat(&self, args: &[super::StaticExpression]) -> String {
         let mut buffer = String::new();
         for arg in args {
-            let value = self.evaluate(&arg.instr);
             let value = self.eval_instruction(&arg.instr);
             let str = value.to_string();
             buffer.push_str(&str);
