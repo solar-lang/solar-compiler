@@ -2,6 +2,7 @@ use crate::mir::{CustomInstructionCode, Instruction};
 use crate::value::Value;
 
 use std::sync::RwLock;
+use std::sync::{Mutex, RwLock};
 
 use hotel::HotelMap;
 
@@ -17,8 +18,10 @@ pub struct EvaluationContext {
 
     /// Contains static, concrete Type Information.
     pub types: RwLock<HotelMap<SSID, Type>>,
+    pub types: HotelMap<SSID, Type>,
 
     pub functions: RwLock<FunctionStore>,
+    pub functions: FunctionStore,
 }
 
 impl<'a> From<CompilerContext<'a>> for EvaluationContext {
