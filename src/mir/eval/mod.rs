@@ -42,7 +42,7 @@ impl<'a> From<CompilerContext<'a>> for EvaluationContext {
 }
 
 impl EvaluationContext {
-    fn evaluate(&self, op: &Instruction) -> Value {
+    pub fn eval_instruction(&self, op: &Instruction) -> Value {
         match op {
             Instruction::Const(v) => v.clone(),
             Instruction::Custom { code, args } => match code {
@@ -51,6 +51,7 @@ impl EvaluationContext {
                     // TODO don't evaluate functions
                     assert!(args.len() == 1, "expect only one argument to be passed");
                     self.evaluate(&args[0].instr)
+                    self.eval_instruction(&args[0].instr)
                 }
                 CustomInstructionCode::Print => {
                     let text = self.string_concat(args);
@@ -85,6 +86,7 @@ impl EvaluationContext {
         let mut buffer = String::new();
         for arg in args {
             let value = self.evaluate(&arg.instr);
+            let value = self.eval_instruction(&arg.instr);
             let str = value.to_string();
             buffer.push_str(&str);
         }
