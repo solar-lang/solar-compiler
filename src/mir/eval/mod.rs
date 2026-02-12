@@ -19,6 +19,8 @@ pub struct EvaluationContext {
     pub types: HotelMap<SSID, Type>,
 
     pub functions: FunctionStore,
+
+    stack: Mutex<Vec<Value>>,
 }
 
 impl<'a> From<CompilerContext<'a>> for EvaluationContext {
@@ -32,8 +34,9 @@ impl<'a> From<CompilerContext<'a>> for EvaluationContext {
 
         EvaluationContext {
             buildin_types,
-            types,
-            functions,
+            types: types.into_inner().expect("locking types"),
+            functions: functions.into_inner().expect("locking functions"),
+            stack: Mutex::new(Vec::new()),
         }
     }
 }
