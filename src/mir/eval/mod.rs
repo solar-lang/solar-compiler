@@ -42,6 +42,26 @@ impl<'a> From<CompilerContext<'a>> for EvaluationContext {
 }
 
 impl EvaluationContext {
+    pub fn call(&mut self, func_id: usize, args: Vec<Value>) -> Value {
+        let instruction = {
+            let f = self
+                .functions
+                .get_by_index(func_id)
+                .expect("receive valid function id");
+            let FunctionInfo::Complete { args, body } = f else {
+                panic!("Expected complete function, got Partial")
+            };
+            &body.instr
+        };
+
+        // Push values on stack.
+        // NOTE this already assumes and further determines the calling convention.
+        self.stack.get_mut().unwrap().extend(args);
+
+        // Call into the function
+        self.eval_instruction(&instruction)
+    }
+
     pub fn eval_instruction(&self, op: &Instruction) -> Value {
         match op {
             Instruction::Const(v) => v.clone(),
