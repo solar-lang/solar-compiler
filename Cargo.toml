@@ -1,5 +1,5 @@
 [package]
-name = "solar-interpreter"
+name = "solar-compiler"
 version = "0.2.0"
 edition = "2021"
 
@@ -24,4 +24,3 @@ walkdir = "2.3.3"
 
 # Collection Data-structure to associate values with keys
 hotel = "1.0.5"
-
