@@ -42,15 +42,17 @@ pub struct Config {
 
 impl Config {
     fn load() -> Self {
-    let project_root = std::env::args().nth(1).unwrap_or(".".to_string());
-        Config { project_root, solarpath: Self::get_solar_path() }
+        let project_root = std::env::args().nth(1).unwrap_or(".".to_string());
+        Config {
+            project_root,
+            solarpath: Self::get_solar_path(),
+        }
     }
 
     fn get_solar_path() -> String {
         let solar_path = std::env::var("SOLAR_PATH").unwrap_or("~/.solar/".to_string());
         let home_path = std::env::var("HOME").expect("get home path env variable");
         let solar_path: String = solar_path.replace('~', &home_path);
-
 
         solar_path
     }

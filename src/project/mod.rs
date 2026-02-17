@@ -5,7 +5,7 @@ pub use libraries::*;
 pub use modules::*;
 pub use project_info::*;
 
-use crate::{Config, util::IdPath};
+use crate::{util::IdPath, Config};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -91,7 +91,7 @@ impl Dependency {
         if !path.ends_with('/') {
             path.push('/');
         }
-        
+
         path.push_str("libraries/");
 
         path + &self.basepath().join("/")
