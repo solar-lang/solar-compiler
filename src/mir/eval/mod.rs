@@ -2,6 +2,7 @@ use crate::compilation::FunctionInfo;
 use crate::mir::Value;
 use crate::mir::{CustomInstructionCode, Instruction};
 
+use std::cell::RefCell;
 use std::sync::Mutex;
 
 use hotel::HotelMap;
@@ -21,7 +22,7 @@ pub struct EvaluationContext {
 
     pub functions: FunctionStore,
 
-    stack: Mutex<Vec<Value>>,
+    stack: RefCell<Vec<Value>>,
 }
 
 impl<'a> From<CompilerContext<'a>> for EvaluationContext {
@@ -37,7 +38,7 @@ impl<'a> From<CompilerContext<'a>> for EvaluationContext {
             buildin_types,
             types: types.into_inner().expect("locking types"),
             functions: functions.into_inner().expect("locking functions"),
-            stack: Mutex::new(Vec::new()),
+            stack: RefCell::new(Vec::new()),
         }
     }
 }
@@ -57,7 +58,7 @@ impl EvaluationContext {
 
         // Push values on stack.
         // NOTE this already assumes and further determines the calling convention.
-        self.stack.get_mut().unwrap().extend(args);
+        self.stack.borrow_mut().extend(args);
 
         // Call into the function
         self.eval_instruction(&instruction)
