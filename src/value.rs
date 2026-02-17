@@ -2,7 +2,6 @@ use std::fmt::{self, Debug};
 
 use crate::id::TypeId;
 
-
 #[derive(Clone)]
 pub enum Value {
     Void,
