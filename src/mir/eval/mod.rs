@@ -50,7 +50,7 @@ impl EvaluationContext {
                 .functions
                 .get_by_index(func_id)
                 .expect("receive valid function id");
-            let FunctionInfo::Complete { args, body } = f else {
+            let FunctionInfo::Complete { arg_type_ids, body } = f else {
                 panic!("Expected complete function, got Partial")
             };
             &body.instr

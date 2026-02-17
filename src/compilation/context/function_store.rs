@@ -15,7 +15,7 @@ pub enum FunctionInfo {
     Partial,
     Complete {
         // TODO also add the name of the argument, for error messages.
-        args: Vec<TypeId>,
+        arg_type_ids: Vec<TypeId>,
         body: StaticExpression,
     },
 }
@@ -42,8 +42,13 @@ impl FunctionStore {
         args: Vec<TypeId>,
         body: StaticExpression,
     ) {
-        self.functions
-            .set_by_index(index, FunctionInfo::Complete { args, body });
+        self.functions.set_by_index(
+            index,
+            FunctionInfo::Complete {
+                arg_type_ids: args,
+                body,
+            },
+        );
     }
 }
 

@@ -179,7 +179,10 @@ impl<'a> CompilerContext<'a> {
 
             if let Some((fnid, info)) = fnstore.get_by_key(&ssid) {
                 match info {
-                    FunctionInfo::Complete { args: _, body } => {
+                    FunctionInfo::Complete {
+                        arg_type_ids: _,
+                        body,
+                    } => {
                         return Ok((fnid, body.ty));
                     }
                     // this can happen, when we recursively call a function in solar code.
