@@ -3,17 +3,19 @@ use std::collections::HashMap;
 use anyhow::Context;
 use hotel::HotelMap;
 
-use crate::util::{self, IdPath};
+use crate::{Config, util::{self, IdPath}};
 
 use super::{Module, Project};
 
 pub type ProjectInfo = HotelMap<IdPath, Project>;
 
-pub fn read_all_projects(fsroot: &str) -> anyhow::Result<ProjectInfo> {
+pub fn read_all_projects(config: &Config) -> anyhow::Result<ProjectInfo> {
     let mut projects = HotelMap::new();
-    let p = Project::open(fsroot, util::target_id())?;
+    let p = Project::open(&config.project_root, util::target_id()).with_context(|| {
+        format!("opening project at {}", config.project_root)
+    })?;
 
-    fn insert_all(p: Project, projects: &mut HotelMap<IdPath, Project>) -> anyhow::Result<()> {
+    fn insert_all(p: Project, projects: &mut HotelMap<IdPath, Project>, config: &Config) -> anyhow::Result<()> {
         for dep in p.config.deps() {
             let path = dep.basepath();
             // skip project, if we have already read it.
@@ -21,9 +23,11 @@ pub fn read_all_projects(fsroot: &str) -> anyhow::Result<ProjectInfo> {
                 continue;
             }
 
-            let dir = dep.dir();
-            let p = Project::open(&dir, path)?;
-            insert_all(p, projects)?;
+            let dir = dep.dir(&config);
+            let p = Project::open(&dir, path).with_context(|| {
+                format!("opening project at {}", dir)
+            })?;
+            insert_all(p, projects, config)?;
         }
 
         projects.insert(p.basepath.clone(), p);
@@ -31,7 +35,7 @@ pub fn read_all_projects(fsroot: &str) -> anyhow::Result<ProjectInfo> {
         Ok(())
     }
 
-    insert_all(p, &mut projects)?;
+    insert_all(p, &mut projects, config)?;
 
     Ok(projects)
 }

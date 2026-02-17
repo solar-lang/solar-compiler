@@ -5,7 +5,7 @@ pub use libraries::*;
 pub use modules::*;
 pub use project_info::*;
 
-use crate::util::IdPath;
+use crate::{Config, util::IdPath};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -86,9 +86,13 @@ impl Dependency {
     }
 
     /// Gives the directory of the library within the local filesystem.
-    pub fn dir(&self) -> String {
-        let path = get_solar_path();
-        let path = path + "libraries/";
+    pub fn dir(&self, config: &Config) -> String {
+        let mut path = config.solarpath.clone();
+        if !path.ends_with('/') {
+            path.push('/');
+        }
+        
+        path.push_str("libraries/");
 
         path + &self.basepath().join("/")
     }
@@ -125,16 +129,4 @@ impl Dependency {
             repo,
         })
     }
-}
-
-fn get_solar_path() -> String {
-    let solar_path = std::env::var("SOLAR_PATH").unwrap_or("~/.solar/".to_string());
-    let home_path = std::env::var("HOME").expect("get home path env variable");
-    let mut solar_path: String = solar_path.replace('~', &home_path);
-
-    if !solar_path.ends_with('/') {
-        solar_path.push('/');
-    }
-
-    solar_path
 }
