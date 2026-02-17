@@ -44,7 +44,7 @@ impl<'a> From<CompilerContext<'a>> for EvaluationContext {
 }
 
 impl EvaluationContext {
-    pub fn call(&mut self, func_id: usize, args: Vec<Value>) -> Value {
+    pub fn call(&self, func_id: usize, args: Vec<Value>) -> Value {
         let instruction = {
             let f = self
                 .functions
