@@ -29,7 +29,7 @@ fn main() {
         .expect("compile code");
     eprintln!("\n{main_function_id:#?}");
 
-    let mut ctx: EvaluationContext = ctx.into();
+    let ctx: EvaluationContext = ctx.into();
 
     let res = ctx.call(main_function_id, Vec::new());
     dbg!(res);

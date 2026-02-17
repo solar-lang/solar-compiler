@@ -3,7 +3,6 @@ use crate::mir::Value;
 use crate::mir::{CustomInstructionCode, Instruction};
 
 use std::cell::RefCell;
-use std::sync::Mutex;
 
 use hotel::HotelMap;
 
