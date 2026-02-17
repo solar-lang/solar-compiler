@@ -96,7 +96,7 @@ impl EvaluationContext {
 
                 self.call(func_id, args)
             }
-            Instruction::GetLocalVar(_) => todo!(),
+            Instruction::GetLocalVar(addr) => {}
             Instruction::NewLocalVar {
                 var_index,
                 var_value,
