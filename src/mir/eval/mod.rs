@@ -88,7 +88,15 @@ impl EvaluationContext {
                     Value::String(buf)
                 }
             },
-            Instruction::FunctionCall { func, args } => todo!(),
+            Instruction::FunctionCall { func, args } => {
+                let func_id = *func;
+                let args: Vec<Value> = args
+                    .iter()
+                    .map(|s| self.eval_instruction(&s.instr))
+                    .collect::<Vec<Value>>();
+
+                self.call(func_id, args)
+            }
             Instruction::GetLocalVar(_) => todo!(),
             Instruction::NewLocalVar {
                 var_index,
