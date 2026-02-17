@@ -35,6 +35,7 @@ fn main() {
     dbg!(res);
 }
 
+// TODO make configurable via env -> .env file -> cli args.
 pub struct Config {
     pub project_root: String,
     pub solarpath: String,
