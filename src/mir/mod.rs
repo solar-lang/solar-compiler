@@ -1,6 +1,8 @@
 mod custom;
 pub mod eval;
+mod value;
 use crate::id::{FunctionId, TypeId};
+pub use value::*;
 
 pub use custom::CustomInstructionCode;
 /// Expression with type-information
@@ -20,7 +22,7 @@ pub enum Instruction {
         code: CustomInstructionCode,
         args: Vec<StaticExpression>,
     },
-    Const(crate::value::Value),
+    Const(Value),
     // Void,
     FunctionCall {
         func: FunctionId,

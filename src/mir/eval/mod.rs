@@ -1,8 +1,8 @@
 use crate::compilation::FunctionInfo;
-use crate::mir::{CustomInstructionCode, Instruction, StaticExpression};
-use crate::value::Value;
+use crate::mir::Value;
+use crate::mir::{CustomInstructionCode, Instruction};
 
-use std::sync::{Mutex, RwLock};
+use std::sync::Mutex;
 
 use hotel::HotelMap;
 

@@ -2,6 +2,7 @@ use std::fmt::{self, Debug};
 
 use crate::id::TypeId;
 
+/// Representation of constants in MIR
 #[derive(Clone)]
 pub enum Value {
     Void,

@@ -29,8 +29,8 @@ pub(crate) fn normalize_path(path: &IdentifierPath) -> Vec<String> {
 pub(crate) fn eval_int(
     int: &ast::expr::literal::Int,
     types: &BuildinTypeId,
-) -> Result<(crate::value::Int, u8), std::num::ParseIntError> {
-    use crate::value::Int;
+) -> Result<(crate::mir::Int, u8), std::num::ParseIntError> {
+    use crate::mir::Int;
     use ast::expr::literal::IntTypeSuffix as Ty;
 
     let type_hint = int.type_suffix.unwrap_or(Ty::Int);

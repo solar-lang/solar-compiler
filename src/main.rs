@@ -5,7 +5,6 @@ pub mod mir;
 mod project;
 mod types;
 mod util;
-mod value;
 
 use project::{read_all_projects, read_modules};
 

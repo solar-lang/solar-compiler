@@ -4,6 +4,7 @@ pub use function_store::*;
 use super::CompilationError;
 use crate::{
     id::{FunctionId, IdItem, IdModule, Symbol, SymbolId, TypeId, SSID},
+    mir::Value,
     mir::{CustomInstructionCode, Instruction, StaticExpression},
     project::{FileInfo, FindError, GlobalModules, Module, ProjectInfo, SymbolResolver},
     types::{
@@ -11,7 +12,6 @@ use crate::{
         Type,
     },
     util::{self, IdPath, Scope},
-    value::Value,
 };
 use hotel::HotelMap;
 use solar_parser::ast::{
