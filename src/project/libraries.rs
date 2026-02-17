@@ -65,7 +65,7 @@ impl Project {
     /// the project id is supposed to be a reference to this exact [Project].
     ///
     /// Returns a Mapping of  {ModulePath => Module}
-    pub fn read_all(&self, project_id: usize) -> anyhow::Result<HashMap<IdPath, Module>> {
+    pub fn read_all(&self, project_id: usize) -> anyhow::Result<HashMap<IdPath, Module<'_>>> {
         let mut map = HashMap::new();
 
         for entry in WalkDir::new(&self.fsroot) {

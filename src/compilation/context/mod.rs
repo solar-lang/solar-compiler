@@ -58,7 +58,7 @@ impl<'a> CompilerContext<'a> {
     }
 
     /// Get a reference to the symbol inside the AST.
-    pub fn get_symbol(&self, (module, file, item): SymbolId) -> (&Module, &FileInfo, &BodyItem) {
+    pub fn get_symbol(&self, (module, file, item): SymbolId) -> (&Module<'_>, &FileInfo<'_>, &BodyItem<'_>) {
         let module = self
             .module_info
             .get(&module)
