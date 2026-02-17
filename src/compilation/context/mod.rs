@@ -522,7 +522,7 @@ impl<'a> CompilerContext<'a> {
             idmodule,
             imports,
         }: Lookup,
-        arg_types: &[TypeId],
+        _arg_types: &[TypeId],
         scope: &Scope,
     ) -> Result<Vec<Symbol>, CompilationError> {
         // TODO check if it was found before, and return compiled version

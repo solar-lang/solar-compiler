@@ -28,7 +28,7 @@ pub enum Instruction {
         func: FunctionId,
         args: Vec<StaticExpression>,
     },
-    /// Get local Variable at address
+    /// Get local Variable at address sp - addr
     GetLocalVar(usize),
     /// Define a new let binding, that can be referenced later
     NewLocalVar {
