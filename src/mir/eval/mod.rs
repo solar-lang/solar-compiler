@@ -1,6 +1,6 @@
 use crate::compilation::FunctionInfo;
-use crate::mir::Value;
 use crate::mir::{CustomInstructionCode, Instruction};
+use crate::mir::{StaticExpression, Value};
 
 use std::cell::RefCell;
 
@@ -77,6 +77,11 @@ impl EvaluationContext {
         return ret;
     }
 
+    pub fn eval_expression(&self, expr: &StaticExpression) -> Value {
+        let i = &expr.instr;
+        self.eval_instruction(i)
+    }
+
     pub fn eval_instruction(&self, op: &Instruction) -> Value {
         match op {
             Instruction::Const(v) => v.clone(),
@@ -104,7 +109,7 @@ impl EvaluationContext {
             Instruction::FunctionCall { func_id, args } => {
                 let args: Vec<Value> = args
                     .iter()
-                    .map(|s| self.eval_instruction(&s.instr))
+                    .map(|s| self.eval_expression(&s))
                     .collect::<Vec<Value>>();
 
                 self.call(*func_id, args)
@@ -123,7 +128,28 @@ impl EvaluationContext {
                 var_index,
                 var_value,
                 body,
-            } => todo!(),
+            } => {
+                // Note: this may well be deleted one day.
+                // It's just a (pricy) runtime assertion,
+                // that indices are computed correctly throughout compilation
+                // calulate expected index of variable and compare with actual one.
+                // expected index = sp - fp, so that fp+index= top of current stack
+                assert!(
+                    {
+                        let expected_index = self.stack.borrow().len() - self.fp();
+                        expected_index == *var_index as usize
+                    },
+                    "expect var index to be top of current function frame"
+                );
+                let value = self.eval_expression(var_value);
+                // push value to stack
+                self.stack.borrow_mut().push(value);
+                let ret = self.eval_expression(body);
+                // drop value from stack
+                self.stack.borrow_mut().pop();
+
+                ret
+            }
             Instruction::IfExpr {
                 condition,
                 case_true,
@@ -140,7 +166,7 @@ impl EvaluationContext {
     fn string_concat(&self, args: &[super::StaticExpression]) -> String {
         let mut buffer = String::new();
         for arg in args {
-            let value = self.eval_instruction(&arg.instr);
+            let value = self.eval_expression(&arg);
             let str = value.to_string();
             buffer.push_str(&str);
         }
