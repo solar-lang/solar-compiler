@@ -47,6 +47,7 @@ impl<'a> From<CompilerContext<'a>> for EvaluationContext {
 
 impl EvaluationContext {
     pub fn call(&self, func_id: usize, args: Vec<Value>) -> Value {
+        // Load the function instructions
         let instruction = {
             let f = self
                 .functions
@@ -58,12 +59,22 @@ impl EvaluationContext {
             &body.instr
         };
 
+        // Set the function pointer to the current reference frame
+        let stack_size = self.stack.borrow().len();
+        self.function_pointer.borrow_mut().push(stack_size);
+
         // Push values on stack.
         // NOTE this already assumes and further determines the calling convention.
         self.stack.borrow_mut().extend(args);
 
-        // Call into the function
-        self.eval_instruction(&instruction)
+        // Call into the function, save return value
+        let ret = self.eval_instruction(&instruction);
+
+        // reset function pointer
+        // and also reset stack to size it had before
+        self.function_pointer.borrow_mut().pop();
+        self.stack.borrow_mut().truncate(stack_size);
+        return ret;
     }
 
     pub fn eval_instruction(&self, op: &Instruction) -> Value {
