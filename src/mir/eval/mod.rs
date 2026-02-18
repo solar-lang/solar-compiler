@@ -21,6 +21,8 @@ pub struct EvaluationContext {
 
     pub functions: FunctionStore,
 
+    function_pointer: RefCell<Vec<usize>>,
+
     stack: RefCell<Vec<Value>>,
 }
 
@@ -37,7 +39,8 @@ impl<'a> From<CompilerContext<'a>> for EvaluationContext {
             buildin_types,
             types: types.into_inner().expect("locking types"),
             functions: functions.into_inner().expect("locking functions"),
-            stack: RefCell::new(Vec::new()),
+            function_pointer: Vec::new().into(),
+            stack: Vec::new().into(),
         }
     }
 }
