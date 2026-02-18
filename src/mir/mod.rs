@@ -37,8 +37,7 @@ pub enum Instruction {
         var_index: u16,
         // The value the variable will hold.
         var_value: StaticExpression,
-        /// The expressions coming after the let binding,
-        /// where the variable is in scope.
+        /// The expression following, wherein the variable is in scope.
         body: StaticExpression,
     },
     IfExpr {
