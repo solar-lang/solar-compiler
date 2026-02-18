@@ -109,7 +109,16 @@ impl EvaluationContext {
 
                 self.call(*func_id, args)
             }
-            Instruction::GetLocalVar(addr) => {}
+            Instruction::GetLocalVar(addr) => {
+                let fp = self.fp();
+                let v_addr = fp + addr;
+
+                self.stack
+                    .borrow()
+                    .get(v_addr)
+                    .expect("fp+addr to be valid index")
+                    .clone()
+            }
             Instruction::NewLocalVar {
                 var_index,
                 var_value,
@@ -121,6 +130,11 @@ impl EvaluationContext {
                 case_false,
             } => todo!(),
         }
+    }
+
+    /// Get the current function pointer
+    fn fp(&self) -> usize {
+        self.function_pointer.borrow().last().copied().unwrap_or(0)
     }
 
     fn string_concat(&self, args: &[super::StaticExpression]) -> String {
