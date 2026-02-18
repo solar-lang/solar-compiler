@@ -101,8 +101,6 @@ impl EvaluationContext {
                     Value::String(buf)
                 }
             },
-            Instruction::FunctionCall { func, args } => {
-                let func_id = *func;
             Instruction::FunctionCall { func_id, args } => {
                 let args: Vec<Value> = args
                     .iter()
