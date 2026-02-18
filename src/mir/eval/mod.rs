@@ -89,12 +89,13 @@ impl EvaluationContext {
             },
             Instruction::FunctionCall { func, args } => {
                 let func_id = *func;
+            Instruction::FunctionCall { func_id, args } => {
                 let args: Vec<Value> = args
                     .iter()
                     .map(|s| self.eval_instruction(&s.instr))
                     .collect::<Vec<Value>>();
 
-                self.call(func_id, args)
+                self.call(*func_id, args)
             }
             Instruction::GetLocalVar(addr) => {}
             Instruction::NewLocalVar {

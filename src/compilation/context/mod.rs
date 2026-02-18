@@ -405,7 +405,11 @@ impl<'a> CompilerContext<'a> {
                         let argsty = args.iter().map(|a| a.ty).collect::<Vec<_>>();
                         let (func, ty) = self.compile_symbol(symbol_id, &argsty)?;
 
-                        Ok(Instruction::FunctionCall { func, args }.expr(ty))
+                        Ok(Instruction::FunctionCall {
+                            func_id: func,
+                            args,
+                        }
+                        .expr(ty))
                     }
                 }
             }

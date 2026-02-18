@@ -25,7 +25,7 @@ pub enum Instruction {
     Const(Value),
     // Void,
     FunctionCall {
-        func: FunctionId,
+        func_id: FunctionId,
         args: Vec<StaticExpression>,
     },
     /// Get local Variable at address fp + addr
